@@ -145,6 +145,7 @@ class MainCtx : public QObject
     // Expose Property Minimal View for Player View
     Q_PROPERTY(bool minimalView READ isMinimalView WRITE setMinimalView NOTIFY mainInterfaceModesChanged FINAL)
     Q_PROPERTY(bool playerView READ isPlayerView WRITE setPlayerView NOTIFY mainInterfaceModesChanged FINAL)
+    Q_PROPERTY(bool pipView READ isPipView WRITE setPipView NOTIFY mainInterfaceModesChanged FINAL)
 
     // This Property only works if hasAcrylicSurface is set
     Q_PROPERTY(bool acrylicActive READ acrylicActive WRITE setAcrylicActive NOTIFY acrylicActiveChanged FINAL)
@@ -216,7 +217,8 @@ public:
         MAININTERFACE_MODE_INVALID = 0,
         MAININTERFACE_MODE_MAINDISPLAY = 1,
         MAININTERFACE_MODE_PLAYER = 2,
-        MAININTERFACE_MODE_MINIMAL = 4
+        MAININTERFACE_MODE_MINIMAL = 4,
+        MAININTERFACE_MODE_PIP = 8
     };
     Q_FLAG(MainInterfaceMode);
     Q_DECLARE_FLAGS(MainInterfaceModes, MainInterfaceMode)
@@ -267,6 +269,7 @@ public:
     inline bool isbgCone() const {return m_bgCone; }
     inline bool isMinimalView() const {return m_mainInterfaceModes & MAININTERFACE_MODE_MINIMAL; }
     inline bool isPlayerView() const {return m_mainInterfaceModes & MAININTERFACE_MODE_PLAYER; }
+    inline bool isPipView() const {return m_mainInterfaceModes & MAININTERFACE_MODE_PIP; }
 
 
     inline bool windowSuportExtendedFrame() const { return m_windowSuportExtendedFrame; }
@@ -536,6 +539,7 @@ public slots:
 
     void setMinimalView(bool);
     void setPlayerView(bool);
+    void setPipView(bool);
 
     void sendHotkey(Qt::Key key, Qt::KeyboardModifiers modifiers );
     void sendVLCHotkey(int vlcHotkey);

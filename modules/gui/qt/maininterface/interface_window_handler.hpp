@@ -51,6 +51,8 @@ protected slots:
     virtual void setRaise();
     virtual void setBoss();
 
+    virtual void onMainInterfaceModesChanged();
+
     void requestActivate();
 
     bool eventFilter(QObject*, QEvent* event) override;
@@ -86,6 +88,10 @@ protected:
     bool m_hasResizeCursor = false;
 
     QRect m_interfaceGeometry;
+
+    bool m_isPipMode = false;
+    QRect m_savedPrePipGeometry;
+    bool m_wasMaximizedBeforePip = false;
 
     WheelToVLCConverter m_wheelAccumulator;
 

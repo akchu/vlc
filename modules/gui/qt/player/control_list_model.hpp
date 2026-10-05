@@ -69,7 +69,8 @@ public:
         PLAYBACK_SPEED_BUTTON,
         HIGH_RESOLUTION_TIME_WIDGET,
         FRAME_PREV_BUTTON,
-        RESERVED_0X1F,
+        PIP_BUTTON,
+        RESERVED_0X1F = PIP_BUTTON,
 
         SPLITTER = 0x20,
         VOLUME,

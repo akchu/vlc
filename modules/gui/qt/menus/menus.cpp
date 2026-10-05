@@ -346,6 +346,13 @@ void VLCMenuBar::ViewMenu(qt_intf_t *p_intf, QMenu *menu)
     connect( action, &QAction::triggered, mi, &MainCtx::setMinimalView );
     action->setChecked( mi->isMinimalView() );
 
+    /* Picture in Picture */
+    action = menu->addAction( qtr( "&Picture in Picture" ) );
+    action->setShortcut(QString( "Ctrl+Shift+P" ));
+    action->setCheckable( true );
+    connect( action, &QAction::triggered, mi, &MainCtx::setPipView );
+    action->setChecked( mi->isPipView() );
+
     action = menu->addAction( qtr( "&View Items as Grid" ), mi,
             &MainCtx::setGridView );
     action->setCheckable( true );

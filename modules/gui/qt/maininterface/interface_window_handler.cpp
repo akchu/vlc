@@ -93,6 +93,12 @@ InterfaceWindowHandler::InterfaceWindowHandler(qt_intf_t *_p_intf, MainCtx* main
 
     const auto updateMinimumSize = [this]()
     {
+        if (m_mainCtx->isPipView())
+        {
+            m_window->setMinimumSize({160, 90});
+            return;
+        }
+
         if (m_mainCtx->isMinimalView())
         {
             m_window->setMinimumSize({128, 16});
@@ -112,6 +118,7 @@ InterfaceWindowHandler::InterfaceWindowHandler(qt_intf_t *_p_intf, MainCtx* main
     connect( m_mainCtx, &MainCtx::intfScaleFactorChanged, this, updateMinimumSize );
     connect( m_mainCtx, &MainCtx::windowExtendedMarginChanged, this, updateMinimumSize );
     connect( m_mainCtx, &MainCtx::mainInterfaceModesChanged, this, updateMinimumSize );
+    connect( m_mainCtx, &MainCtx::mainInterfaceModesChanged, this, &InterfaceWindowHandler::onMainInterfaceModesChanged );
     m_mainCtx->updateIntfScaleFactor();
     updateMinimumSize();
 
@@ -498,6 +505,61 @@ void InterfaceWindowHandler::requestActivate()
 void InterfaceWindowHandler::setInterfaceAlwaysOnTop( bool on_top )
 {
     WindowStateHolder::holdOnTop(m_window, WindowStateHolder::INTERFACE, on_top);
+}
+
+void InterfaceWindowHandler::onMainInterfaceModesChanged()
+{
+    const bool pipActive = m_mainCtx->isPipView();
+    if (pipActive == m_isPipMode)
+        return;
+
+    m_isPipMode = pipActive;
+
+    if (pipActive)
+    {
+        m_wasMaximizedBeforePip = (m_window->visibility() == QWindow::Maximized);
+        m_savedPrePipGeometry = m_window->geometry();
+
+        WindowStateHolder::holdOnTop(m_window, WindowStateHolder::INTERFACE, true);
+        m_window->setMinimumSize({160, 90});
+
+        if (m_wasMaximizedBeforePip)
+            setInterfaceNormal();
+
+        double scale = m_mainCtx->getIntfScaleFactor();
+        int pipWidth = std::round(360 * scale);
+        int pipHeight = std::round(202 * scale);
+
+        QScreen *screen = m_window->screen();
+        if (!screen)
+            screen = QGuiApplication::primaryScreen();
+
+        if (screen)
+        {
+            const QRect avail = screen->availableGeometry();
+            const int margin = std::round(20 * scale);
+            const int x = avail.right() - pipWidth - margin;
+            const int y = avail.bottom() - pipHeight - margin;
+            m_window->setGeometry(x, y, pipWidth, pipHeight);
+        }
+        else
+        {
+            m_window->resize(pipWidth, pipHeight);
+        }
+    }
+    else
+    {
+        WindowStateHolder::holdOnTop(m_window, WindowStateHolder::INTERFACE, m_mainCtx->isInterfaceAlwaysOnTop());
+
+        if (m_wasMaximizedBeforePip)
+        {
+            setInterfaceMaximized();
+        }
+        else if (!m_savedPrePipGeometry.isEmpty())
+        {
+            m_window->setGeometry(m_savedPrePipGeometry);
+        }
+    }
 }
 
 // Functions private

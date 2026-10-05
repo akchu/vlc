@@ -319,6 +319,8 @@ Item {
                 // MEDIALIB_MODE flag should always be set
 
                 switch (MainCtx.effectiveMainInterfaceMode) {
+                case MainCtx.MAININTERFACE_MODE_PIP:
+                    return "qrc:///qt/qml/VLC/Player/PIPModeView.qml"
                 case MainCtx.MAININTERFACE_MODE_MINIMAL:
                     return "qrc:///qt/qml/VLC/Player/MinimalView.qml"
                 case  MainCtx.MAININTERFACE_MODE_PLAYER:

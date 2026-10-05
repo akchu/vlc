@@ -718,6 +718,15 @@ void MainCtx::setPlayerView(bool enable)
     emit mainInterfaceModesChanged(m_mainInterfaceModes);
 }
 
+void MainCtx::setPipView(bool enable)
+{
+    if (m_mainInterfaceModes.testFlag(MAININTERFACE_MODE_PIP) == enable)
+        return;
+
+    m_mainInterfaceModes.setFlag(MAININTERFACE_MODE_PIP, enable);
+    emit mainInterfaceModesChanged(m_mainInterfaceModes);
+}
+
 void MainCtx::setShowRemainingTime( bool show )
 {
     m_showRemainingTime = show;
@@ -1112,7 +1121,9 @@ void MainCtx::setAttachedToolTip(QObject *toolTip)
 
 MainCtx::MainInterfaceMode MainCtx::getEffectiveMainInterfaceMode() const {
     //priority applies across modes
-    if (m_mainInterfaceModes & MainCtx::MAININTERFACE_MODE_MINIMAL)
+    if (m_mainInterfaceModes & MainCtx::MAININTERFACE_MODE_PIP)
+        return MAININTERFACE_MODE_PIP;
+    else if (m_mainInterfaceModes & MainCtx::MAININTERFACE_MODE_MINIMAL)
         return MAININTERFACE_MODE_MINIMAL;
     else if (m_mainInterfaceModes & MAININTERFACE_MODE_PLAYER)
         return MAININTERFACE_MODE_PLAYER;
